@@ -2,6 +2,7 @@
 #include "hello.h"
 
 std::string printGameOver(){
-	cout << "Game Over!";
+	// TODO: Return the required string
+	std::cout << "Game Over!";
 	return "";
 }
