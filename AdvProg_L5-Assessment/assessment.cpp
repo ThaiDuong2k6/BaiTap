@@ -19,7 +19,11 @@ void updateMask(string& mask, const char ch, const string& word)
           ch (const char): the character that is tested to see if it is in the word or not
           word (const string&): the word that is needed to be tested
      */
-
+    for (size_t i = 0; i < word.size(); ++i) {
+        if (word[i] == ch) {
+            mask[i] = ch;
+        }
+    }
 }
 
 int countMistakes(const string& word, HangmanGuesser& hmGuesser)
@@ -34,7 +38,17 @@ int countMistakes(const string& word, HangmanGuesser& hmGuesser)
      Returns:
          int: the number of mistakes made by the guesser
      */
-    return -1;
+    int mistakes = 0;
+    string mask(word.size(), MASK_CHAR);
+    while (!isWholeWord(mask)) {
+        char guess = hmGuesser.guess(mask);
+        if (!isCharInWord(guess, word)) {
+            ++mistakes;
+        } else {
+            updateMask(mask, guess, word);
+        }
+    }
+    return mistakes;
 }
 
 void getMistakeByWordList(vector<MistakeByWord>& mistakeList, vector<string>& unsolvableList, const vector<string>& testWords, HangmanGuesser& hmGuesser)
@@ -50,6 +64,14 @@ void getMistakeByWordList(vector<MistakeByWord>& mistakeList, vector<string>& un
          testWords (vector<string>&): the list of words that need to be tested
          hmGuesser (HangmanGuesser&): the guesser that is used to make the guess
      */
+    for (const string& word : testWords) {
+        int mistakes = countMistakes(word, hmGuesser);
+        if (mistakes == -1) {
+            unsolvableList.push_back(word);
+        } else {
+            mistakeList.push_back({word, mistakes});
+        }
+    }
 }
 
 bool isCorrectChar(char ch, const string& mask)
